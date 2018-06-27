@@ -35,8 +35,14 @@ where
             .map_err(Error::I2c)
     }
 
-	/// Take a temperature and humidity measurement
+    /// Take a temperature and humidity measurement
     pub fn measure(&mut self) -> Result<Measurement, Error<E>> {
+        let raw = self.measure_raw()?;
+        Ok(convert(&raw))
+    }
+
+    /// Take a temperature and humidity measurement
+    pub fn measure_raw(&mut self) -> Result<MeasurementRaw, Error<E>> {
         self.command(Command::Measure(ClockStretch::Disabled, MeasurementOrder::TFirst))?;
         self.delay.delay_ms(15);
         let mut buf = [0; 6];
@@ -44,12 +50,12 @@ where
                 .map_err(Error::I2c)?;
         self.validate_crc(&buf[0..3])?;
         self.validate_crc(&buf[3..6])?;
-        let temperature = convert_temperature(BigEndian::read_u16(&buf[0..2]));
-        let humidity = convert_humidity(BigEndian::read_u16(&buf[3..5]));
-        Ok(Measurement{ temperature, humidity })
+        let temperature = BigEndian::read_u16(&buf[0..2]);
+        let humidity = BigEndian::read_u16(&buf[3..5]);
+        Ok(MeasurementRaw{ temperature, humidity })
     }
 
-	/// Read the ID register
+    /// Read the ID register
     pub fn read_id(&mut self) -> Result<u16, Error<E>> {
         self.command(Command::ReadID)?;
         let mut id_bytes = [0; 3];
@@ -65,6 +71,14 @@ where
             0x00 => Ok(()),
             _ => Err(Error::Crc),
         }
+    }
+}
+
+/// Convert MeasurementRaw to Measurement
+pub fn convert(m: &MeasurementRaw) -> Measurement {
+    Measurement{
+        temperature: convert_temperature(m.temperature),
+        humidity: convert_humidity(m.humidity),
     }
 }
 
@@ -121,6 +135,12 @@ pub enum MeasurementOrder {
 pub struct Measurement {
     pub temperature: i32,
     pub humidity: i32,
+}
+
+#[derive(Debug)]
+pub struct MeasurementRaw {
+    pub temperature: u16,
+    pub humidity: u16,
 }
 
 impl Command {
