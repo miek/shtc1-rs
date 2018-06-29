@@ -13,10 +13,8 @@ This driver was built using [`embedded-hal`] traits.
 
 - Take a temperature & humidity measurement
 - Read the ID register
+- Soft reset
 
-## TODO
-
-- [ ] Reset command
 
 ## License
 

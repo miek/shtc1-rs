@@ -66,15 +66,20 @@ where
         Ok(BigEndian::read_u16(&id_bytes[0..2]))
     }
 
+    pub fn release(self) -> I2C {
+        self.i2c
+    }
+
+    pub fn reset(&mut self) -> Result<(), Error<E>> {
+        self.command(Command::SoftReset)?;
+        Ok(())
+    }
+
     fn validate_crc(&self, data: &[u8]) -> Result<(), Error<E>> {
         match crc8(data) {
             0x00 => Ok(()),
             _ => Err(Error::Crc),
         }
-    }
-
-    pub fn release(self) -> I2C {
-        self.i2c
     }
 }
 
@@ -162,7 +167,7 @@ impl Command {
 
             // 5.6 Soft Reset
             // Table 10
-            Command::SoftReset => [0x50, 0x5D],
+            Command::SoftReset => [0x80, 0x5D],
 
             // 5.7 Read-out of ID register
             // Table 11
