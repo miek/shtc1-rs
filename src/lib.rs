@@ -129,6 +129,7 @@ enum Command {
     ReadID,
 }
 
+#[allow(dead_code)]
 enum ClockStretch {
     Enabled,
     Disabled,
