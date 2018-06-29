@@ -1,6 +1,6 @@
 # [SHTC1](https://crates.io/crates/shtc1)
 
-A platform agnostic driver to interface with the Sensirion SHT3C1 humidity sensor via I2C.
+A platform agnostic driver to interface with the Sensirion SHTC1 humidity sensor via I2C.
 
 This driver was built using [`embedded-hal`] traits.
 
