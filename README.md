@@ -30,4 +30,4 @@ at your option.
 ## Resources
 
 The following resources were consulted when making this driver:
-- https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/0_Datasheets/Humidity/Sensirion_Humidity_Sensors_SHTC1_Datasheet.pdf
+- https://www.sensirion.com/file/datasheet_shtc1/
